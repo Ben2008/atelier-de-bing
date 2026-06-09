@@ -15,6 +15,9 @@ app.include_router(utilities.router)
 app.include_router(mywork.router)
 app.include_router(vdg_motor.router)
 
+for route in app.routes:
+    print(route.path)
+
 #@app.get("/")
 #async def home():
 #    return {"message": "L'Atelier de Bing is running"}

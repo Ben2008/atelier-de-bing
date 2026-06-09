@@ -73,11 +73,24 @@
 
 </table>
 
-<td>
-    <a href="/utility/vdg-motor/edit/{{ row.id }}">
-        Edit
-    </a>
-</td>
+<tbody>
+
+{% for row in results %}
+
+<tr>
+    <td>{{ row.motor_model }}</td>
+    <td>{{ row.hp }}</td>
+
+    <td>
+        <a href="/utilities/vdg-motor/edit/{{ row.id }}">
+            Edit
+        </a>
+    </td>
+</tr>
+
+{% endfor %}
+
+</tbody>
 
 </div>
 </body>

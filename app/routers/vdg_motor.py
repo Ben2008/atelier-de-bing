@@ -1,3 +1,4 @@
+print("Loading VDG router...")
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
@@ -11,17 +12,14 @@ templates = Jinja2Templates(
 )
 
 
-@router.get("/utility/vdg-motor")
+@router.get("/utilities/vdg-motor")
 async def vdg_motor_page(
         request: Request,
         speed: int = 400,
         pull: int = 20
-):
+        ):
 
-    results = search_motors(
-        speed,
-        pull
-    )
+    results = search_motors(speed,pull)
 
     return templates.TemplateResponse(
     request=request,
@@ -31,4 +29,4 @@ async def vdg_motor_page(
         "speed": speed,
         "pull": pull
     }
-)
+    )
