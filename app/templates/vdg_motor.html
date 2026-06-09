@@ -2,96 +2,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>VDG Motor Spec</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>VDG Motor Spec</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
+
 <div class="container mt-4">
-<h2>VDG Motor Spec</h2>
 
-<form method="get">
+    <h2 class="mb-4">VDG Motor Spec</h2>
 
-    <div>
-        <label>Speed (ft/min)</label>
+    <form method="get" class="row g-3 mb-4">
 
-        <input
-            type="number"
-            name="speed"
-            value="{{ speed }}"
-            required>
+        <div class="col-md-3">
+            <label class="form-label">Speed (ft/min)</label>
+            <input
+                type="number"
+                class="form-control"
+                name="speed"
+                value="{{ speed }}"
+                required>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Belt Pull (lbf)</label>
+            <input
+                type="number"
+                class="form-control"
+                name="pull"
+                value="{{ pull }}"
+                required>
+        </div>
+
+        <div class="col-md-2 align-self-end">
+            <button
+                type="submit"
+                class="btn btn-primary">
+                Search
+            </button>
+        </div>
+
+    </form>
+
+    <div class="table-responsive">
+
+        <table class="table table-striped table-hover table-bordered">
+
+            <thead class="table-dark">
+
+                <tr>
+                    <th>Motor</th>
+                    <th>HP</th>
+                    <th>Speed (ft/min)</th>
+                    <th>Pull (lbf)</th>
+                    <th>RPM</th>
+                    <th>Gear</th>
+                    <th>Poles</th>
+                    <th>Edit</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for row in results %}
+
+                <tr>
+
+                    <td>{{ row.motor_model }}</td>
+                    <td>{{ row.hp }}</td>
+                    <td>{{ row.speed_ftmin }}</td>
+                    <td>{{ row.belt_pull_lbf }}</td>
+                    <td>{{ row.drum_rpm }}</td>
+                    <td>{{ row.gear_code }}</td>
+                    <td>{{ row.stator_poles }}</td>
+
+                    <td>
+                        <a
+                            href="/utilities/vdg-motor/edit/{{ row.id }}"
+                            class="btn btn-sm btn-outline-primary">
+                            Edit
+                        </a>
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
     </div>
-
-    <div>
-        <label>Belt Pull (lbf)</label>
-
-        <input
-            type="number"
-            name="pull"
-            value="{{ pull }}"
-            required>
-    </div>
-
-    <button type="submit">
-        Search
-    </button>
-
-</form>
-
-<table>
-
-<thead>
-<tr>
-    <th>Motor</th>
-    <th>HP</th>
-    <th>Speed</th>
-    <th>Pull</th>
-    <th>RPM</th>
-    <th>Gear</th>
-    <th>Poles</th>
-</tr>
-</thead>
-
-<tbody>
-
-{% for row in results %}
-
-<tr>
-
-    <td>{{ row.motor_model }}</td>
-    <td>{{ row.hp }}</td>
-    <td>{{ row.speed_ftmin }}</td>
-    <td>{{ row.belt_pull_lbf }}</td>
-    <td>{{ row.drum_rpm }}</td>
-    <td>{{ row.gear_code }}</td>
-    <td>{{ row.stator_poles }}</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
-
-<tbody>
-
-{% for row in results %}
-
-<tr>
-    <td>{{ row.motor_model }}</td>
-    <td>{{ row.hp }}</td>
-
-    <td>
-        <a href="/utilities/vdg-motor/edit/{{ row.id }}">
-            Edit
-        </a>
-    </td>
-</tr>
-
-{% endfor %}
-
-</tbody>
 
 </div>
+
 </body>
 </html>
