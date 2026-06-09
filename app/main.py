@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.routers import mechanical, utilities, mywork
+from app.routers import mechanical, utilities, mywork, vdg_motor
 
 app = FastAPI(title="L'Atelier de Bing")
 
@@ -13,6 +13,7 @@ templates = Jinja2Templates(directory="app/templates")
 app.include_router(mechanical.router)
 app.include_router(utilities.router)
 app.include_router(mywork.router)
+app.include_router(vdg_motor.router)
 
 #@app.get("/")
 #async def home():
@@ -26,3 +27,5 @@ def home(request: Request):
         name="home.html",
         context={}
     )
+
+
