@@ -1,101 +1,314 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>VDG Motor Spec</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDG Motor Spec - L'Atelier de Bing</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --accent-color: #0dcaf0;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container-wrapper {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .header-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .header-section h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-section p {
+            color: var(--secondary-color);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        
+        .search-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .search-section .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .search-section .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-section .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+        }
+        
+        .btn-search {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0a58ca 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            color: white;
+        }
+        
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+            color: white;
+        }
+        
+        .table-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .table-responsive {
+            margin: 0;
+        }
+        
+        .table {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        
+        .table thead {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+        
+        .table thead th {
+            color: white;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+            border: none;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.04);
+        }
+        
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            color: #2c3e50;
+        }
+        
+        .table tbody td:first-child {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .spec-badge {
+            display: inline-block;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background-color: #e7f3ff;
+            color: var(--primary-color);
+        }
+        
+        .btn-edit {
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-edit:hover {
+            background-color: #0bb5d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(13, 202, 240, 0.3);
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--secondary-color);
+        }
+        
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .header-section,
+            .search-section,
+            .table-section {
+                padding: 1.5rem;
+            }
+            
+            .table {
+                font-size: 0.85rem;
+            }
+            
+            .table thead th,
+            .table tbody td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container mt-4">
-
-    <h2 class="mb-4">VDG Motor Spec</h2>
-
-    <form method="get" class="row g-3 mb-4">
-
-        <div class="col-md-3">
-            <label class="form-label">Speed (ft/min)</label>
-            <input
-                type="number"
-                class="form-control"
-                name="speed"
-                value="{{ speed }}"
-                required>
-        </div>
-
-        <div class="col-md-3">
-            <label class="form-label">Belt Pull (lbf)</label>
-            <input
-                type="number"
-                class="form-control"
-                name="pull"
-                value="{{ pull }}"
-                required>
-        </div>
-
-        <div class="col-md-2 align-self-end">
-            <button
-                type="submit"
-                class="btn btn-primary">
-                Search
-            </button>
-        </div>
-
-    </form>
-
-    <div class="table-responsive">
-
-        <table class="table table-striped table-hover table-bordered">
-
-            <thead class="table-dark">
-
-                <tr>
-                    <th>Motor</th>
-                    <th>HP</th>
-                    <th>Speed (ft/min)</th>
-                    <th>Pull (lbf)</th>
-                    <th>RPM</th>
-                    <th>Gear</th>
-                    <th>Poles</th>
-                    <th>Edit</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-            {% for row in results %}
-
-                <tr>
-
-                    <td>{{ row.motor_model }}</td>
-                    <td>{{ row.hp }}</td>
-                    <td>{{ row.speed_ftmin }}</td>
-                    <td>{{ row.belt_pull_lbf }}</td>
-                    <td>{{ row.drum_rpm }}</td>
-                    <td>{{ row.gear_code }}</td>
-                    <td>{{ row.stator_poles }}</td>
-
-                    <td>
-                        <a
-                            href="/utilities/vdg-motor/edit/{{ row.id }}"
-                            class="btn btn-sm btn-outline-primary">
-                            Edit
-                        </a>
-                    </td>
-
-                </tr>
-
-            {% endfor %}
-
-            </tbody>
-
-        </table>
-
+<div class="container-wrapper">
+    
+    <!-- Header Section -->
+    <div class="header-section">
+        <h2>⚙️ VDG Motor Specification Finder</h2>
+        <p>Search for optimal motor configurations based on belt speed and pull requirements</p>
+    </div>
+    
+    <!-- Search Section -->
+    <div class="search-section">
+        <form method="get" class="row g-3">
+            
+            <div class="col-md-4">
+                <label class="form-label">Belt Speed (ft/min)</label>
+                <input
+                    type="number"
+                    class="form-control"
+                    name="speed"
+                    value="{{ speed }}"
+                    min="0"
+                    step="10"
+                    required>
+            </div>
+            
+            <div class="col-md-4">
+                <label class="form-label">Belt Pull (lbf)</label>
+                <input
+                    type="number"
+                    class="form-control"
+                    name="pull"
+                    value="{{ pull }}"
+                    min="0"
+                    step="5"
+                    required>
+            </div>
+            
+            <div class="col-md-4">
+                <button
+                    type="submit"
+                    class="btn btn-search w-100">
+                    🔍 Search Motors
+                </button>
+            </div>
+            
+        </form>
+    </div>
+    
+    <!-- Results Section -->
+    <div class="table-section">
+        
+        {% if results %}
+            <div class="table-responsive">
+                <table class="table">
+                    
+                    <thead>
+                        <tr>
+                            <th>Motor Model</th>
+                            <th>Horsepower</th>
+                            <th>Speed (ft/min)</th>
+                            <th>Pull (lbf)</th>
+                            <th>RPM</th>
+                            <th>Gear</th>
+                            <th>Poles</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for row in results %}
+                            <tr>
+                                <td>{{ row.motor_model }}</td>
+                                <td><span class="spec-badge">{{ row.hp }} HP</span></td>
+                                <td><strong>{{ row.speed_ftmin }}</strong></td>
+                                <td><strong>{{ row.belt_pull_lbf }}</strong></td>
+                                <td>{{ row.drum_rpm }}</td>
+                                <td>{{ row.gear_code }}</td>
+                                <td>{{ row.stator_poles }}</td>
+                                <td>
+                                    <a
+                                        href="/utilities/vdg-motor/edit/{{ row.id }}"
+                                        class="btn-edit">
+                                        Edit
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h5>No Results Found</h5>
+                <p>Try adjusting your search criteria for speed and belt pull</p>
+            </div>
+        {% endif %}
+        
     </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
