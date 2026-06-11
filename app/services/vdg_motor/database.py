@@ -80,22 +80,41 @@ def calculate_derived_specs(motor: dict) -> dict:
     """
     derived = {}
     
-    # Synchronous velocity: Vs = Hz * 60 * 2 / Poles
-    if 'frequency_hz' in motor and motor['frequency_hz'] is not None and \
-       'stator_poles' in motor and motor['stator_poles'] is not None:
-        frequency = motor['frequency_hz']
-        poles = motor['stator_poles']
-        if poles > 0:
-            vs = frequency * 60 * 2 / poles
-            derived['Vs'] = vs
-            
-            # Actual rotor speed: Vr = Vs * (1 - slip)
-            slip = DEFAULT_SLIP  # 2%
-            vr = vs * (1 - slip)
-            derived['Vr'] = round(vr, 0)  # Round to integer
-            
-            # Gear ratio: Gear_ratio = Vr / RPM
-            # Use cal_RPM if available, otherwise use drum_rpm
+    # Try to use pre-calculated values from database first
+    if 'cal_Vs' in motor and motor['cal_Vs'] is not None:
+        derived['Vs'] = motor['cal_Vs']
+    else:
+        # Calculate Synchronous velocity: Vs = Hz * 60 * 2 / Poles
+        if 'frequency_hz' in motor and motor['frequency_hz'] is not None and \
+           'stator_poles' in motor and motor['stator_poles'] is not None:
+            frequency = motor['frequency_hz']
+            poles = motor['stator_poles']
+            if poles > 0:
+                vs = frequency * 60 * 2 / poles
+                derived['Vs'] = vs
+    
+    # Try to use pre-calculated Vr from database
+    if 'cal_Vr' in motor and motor['cal_Vr'] is not None:
+        derived['Vr'] = motor['cal_Vr']
+    else:
+        # Calculate Actual rotor speed: Vr = Vs * (1 - slip)
+        if 'Vs' in derived or ('cal_Vs' in motor and motor['cal_Vs'] is not None):
+            vs = derived.get('Vs', motor.get('cal_Vs'))
+            if vs:
+                slip = DEFAULT_SLIP  # 2%
+                vr = vs * (1 - slip)
+                derived['Vr'] = round(vr, 0)  # Round to integer
+    
+    # Try to use pre-calculated Gear Ratio from database
+    if 'cal_Gear_ratio' in motor and motor['cal_Gear_ratio'] is not None:
+        derived['Gear_ratio'] = motor['cal_Gear_ratio']
+    else:
+        # Calculate Gear ratio: Gear_ratio = Vr / RPM
+        vr = derived.get('Vr')
+        if not vr and 'cal_Vr' in motor:
+            vr = motor['cal_Vr']
+        
+        if vr:
             rpm = motor.get('cal_RPM', motor.get('drum_rpm'))
             if rpm and rpm > 0:
                 gear_ratio = vr / rpm
@@ -138,56 +157,58 @@ def calculate_derived_specs(motor: dict) -> dict:
 
 def get_motor_specifications(motor_id: int):
     """
-    Get motor specifications and split them into Metric and Imperial groups
+    Get motor specifications and format for display
     
     Returns:
-        tuple: (metric_specs, imperial_specs) - each is a list of dicts with 'name', 'value', 'unit'
+        tuple: (conversion_specs) - formatted for display
     """
     motor = get_motor_by_id(motor_id)
     
     if not motor:
-        return [], []
+        return []
     
-    # Define specification mappings with their units
-    # Format: (db_field, display_name, unit_type)
-    spec_definitions = [
-        # Metric specifications
-        ('drum_rpm', 'Drum RPM', 'metric'),
-        ('stator_poles', 'Stator Poles', 'metric'),
-        ('frequency_hz', 'Frequency', 'metric'),  # Hz
-        
-        # Imperial specifications
-        ('speed_ftmin', 'Speed', 'imperial'),  # ft/min
-        ('belt_pull_lbf', 'Belt Pull', 'imperial'),  # lbf
-    ]
+    conversion_specs = []
     
-    metric_specs = []
-    imperial_specs = []
+    # Power conversion: kW to HP
+    power_kw = motor.get('cal_Power_kW')
+    if not power_kw and motor.get('hp'):
+        power_kw = round(motor['hp'] * 0.746, 3)
     
-    for db_field, display_name, unit_type in spec_definitions:
-        if db_field in motor and motor[db_field] is not None:
-            spec_entry = {
-                'name': display_name,
-                'value': motor[db_field]
-            }
-            
-            # Add appropriate unit
-            if db_field == 'speed_ftmin':
-                spec_entry['unit'] = 'ft/min'
-            elif db_field == 'belt_pull_lbf':
-                spec_entry['unit'] = 'lbf'
-            elif db_field == 'drum_rpm':
-                spec_entry['unit'] = 'RPM'
-            elif db_field == 'stator_poles':
-                spec_entry['unit'] = ''
-            elif db_field == 'frequency_hz':
-                spec_entry['unit'] = 'Hz'
-            else:
-                spec_entry['unit'] = ''
-            
-            if unit_type == 'metric':
-                metric_specs.append(spec_entry)
-            else:
-                imperial_specs.append(spec_entry)
+    if power_kw and motor.get('hp'):
+        conversion_specs.append({
+            'name': 'Power',
+            'metric_value': power_kw,
+            'metric_unit': 'kW',
+            'imperial_value': motor['hp'],
+            'imperial_unit': 'HP'
+        })
     
-    return metric_specs, imperial_specs
+    # Speed conversion: m/s to ft/min
+    speed_ms = motor.get('cal_Speed_ms')
+    if not speed_ms and motor.get('speed_ftmin'):
+        speed_ms = round(motor['speed_ftmin'] * 0.00508, 3)
+    
+    if speed_ms and motor.get('speed_ftmin'):
+        conversion_specs.append({
+            'name': 'Speed',
+            'metric_value': speed_ms,
+            'metric_unit': 'm/s',
+            'imperial_value': motor['speed_ftmin'],
+            'imperial_unit': 'ft/min'
+        })
+    
+    # Belt pull conversion: N to lbf
+    belt_pull_n = motor.get('cal_Belt_pull_N')
+    if not belt_pull_n and motor.get('belt_pull_lbf'):
+        belt_pull_n = round(motor['belt_pull_lbf'] * 4.448, 3)
+    
+    if belt_pull_n and motor.get('belt_pull_lbf'):
+        conversion_specs.append({
+            'name': 'Belt Pull',
+            'metric_value': belt_pull_n,
+            'metric_unit': 'N',
+            'imperial_value': motor['belt_pull_lbf'],
+            'imperial_unit': 'lbf'
+        })
+    
+    return conversion_specs
