@@ -122,6 +122,7 @@
         .table tbody tr {
             border-bottom: 1px solid #f0f0f0;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
         
         .table tbody tr:hover {
@@ -150,7 +151,7 @@
             color: var(--primary-color);
         }
         
-        .btn-edit {
+        .btn-view {
             background-color: var(--accent-color);
             border: none;
             border-radius: 6px;
@@ -161,9 +162,10 @@
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
+            cursor: pointer;
         }
         
-        .btn-edit:hover {
+        .btn-view:hover {
             background-color: #0bb5d8;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(13, 202, 240, 0.3);
@@ -283,9 +285,9 @@
                                 <td>{{ row.stator_poles }}</td>
                                 <td>
                                     <a
-                                        href="/utilities/vdg-motor/edit/{{ row.id }}"
-                                        class="btn-edit">
-                                        Edit
+                                        href="/utilities/vdg-motor/view/{{ row.id }}"
+                                        class="btn-view">
+                                        View Details
                                     </a>
                                 </td>
                             </tr>
