@@ -1,9 +1,8 @@
-print("Loading VDG router...")
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
-from app.services.vdg_motor.database import search_motors
+from app.services.vdg_motor.database import search_motors, get_motor_by_id, get_motor_specifications
 
 router = APIRouter()
 
@@ -19,7 +18,7 @@ async def vdg_motor_page(
         pull: int = 20
         ):
 
-    results = search_motors(speed,pull)
+    results = search_motors(speed, pull)
 
     return templates.TemplateResponse(
     request=request,
@@ -29,4 +28,41 @@ async def vdg_motor_page(
         "speed": speed,
         "pull": pull
     }
+    )
+
+
+@router.get("/utilities/vdg-motor/view/{motor_id}")
+async def motor_view_page(
+        request: Request,
+        motor_id: int
+        ):
+    """
+    Display detailed motor specifications in motor_view page
+    Splits specifications into Metric and Imperial groups
+    """
+    
+    motor = get_motor_by_id(motor_id)
+    
+    if not motor:
+        return templates.TemplateResponse(
+            request=request,
+            name="motor_view.html",
+            context={
+                "motor": None,
+                "error": "Motor not found"
+            }
+        )
+    
+    # Get specifications grouped by unit type
+    metric_specs, imperial_specs = get_motor_specifications(motor_id)
+    
+    return templates.TemplateResponse(
+        request=request,
+        name="motor_view.html",
+        context={
+            "motor": motor,
+            "metric_specs": metric_specs,
+            "imperial_specs": imperial_specs,
+            "error": None
+        }
     )
