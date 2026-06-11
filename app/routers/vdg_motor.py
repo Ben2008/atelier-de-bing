@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
-from app.services.vdg_motor.database import search_motors, get_motor_by_id, get_motor_specifications
+from app.services.vdg_motor.database import search_motors, get_motor_by_id, get_motor_specifications, calculate_derived_specs
 
 router = APIRouter()
 
@@ -39,6 +39,9 @@ async def motor_view_page(
     """
     Display detailed motor specifications in motor_view page
     Splits specifications into Metric and Imperial groups
+    Calculates derived specifications:
+    - Vsynchronous, Vr, Gear Ratio
+    - Unit conversions (using cal_ prefix fields if available)
     """
     
     motor = get_motor_by_id(motor_id)
@@ -56,6 +59,9 @@ async def motor_view_page(
     # Get specifications grouped by unit type
     metric_specs, imperial_specs = get_motor_specifications(motor_id)
     
+    # Calculate derived specifications and unit conversions
+    derived_specs = calculate_derived_specs(motor)
+    
     return templates.TemplateResponse(
         request=request,
         name="motor_view.html",
@@ -63,6 +69,7 @@ async def motor_view_page(
             "motor": motor,
             "metric_specs": metric_specs,
             "imperial_specs": imperial_specs,
+            "derived_specs": derived_specs,
             "error": None
         }
     )
