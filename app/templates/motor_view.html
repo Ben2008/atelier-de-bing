@@ -13,6 +13,7 @@
             --accent-color: #0dcaf0;
             --metric-color: #e7f3ff;
             --imperial-color: #fff3e0;
+            --calc-color: #f0f0f0;
         }
         
         body {
@@ -68,6 +69,60 @@
             color: white;
         }
         
+        /* Motor Overview Section */
+        .overview-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .motor-info-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+        }
+        
+        .motor-info-card h3 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .info-item {
+            padding: 0.9rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            color: var(--primary-color);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        
+        .info-value-unit {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-left: 0.3rem;
+        }
+        
+        /* Main Content Section with Specs and Photo */
         .content-section {
             display: grid;
             grid-template-columns: 1fr 1fr 350px;
@@ -99,6 +154,12 @@
             background-color: var(--imperial-color);
             border-color: #ff9800;
             color: #ff9800;
+        }
+        
+        .conversion-group .spec-group-header {
+            background-color: #f0f0f0;
+            border-color: #999;
+            color: #333;
         }
         
         .spec-items {
@@ -146,6 +207,44 @@
             font-size: 0.85rem;
             color: var(--secondary-color);
             font-weight: 600;
+        }
+        
+        .conversion-item {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            text-align: center;
+        }
+        
+        .conversion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .conversion-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .conversion-values {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .conversion-value {
+            flex: 1;
+            padding: 0.5rem;
+            background: #f9f9f9;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+        
+        .conversion-arrow {
+            color: #999;
+            font-size: 0.9rem;
         }
         
         .photo-area {
@@ -196,42 +295,6 @@
             margin-top: 0.5rem;
         }
         
-        .motor-info-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .motor-info-card h3 {
-            color: var(--primary-color);
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        
-        .info-item {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .info-item:last-child {
-            border-bottom: none;
-        }
-        
-        .info-label {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.9rem;
-        }
-        
-        .info-value {
-            color: var(--primary-color);
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin-top: 0.25rem;
-        }
-        
         .empty-state {
             text-align: center;
             padding: 3rem;
@@ -253,6 +316,10 @@
                 grid-template-columns: 1fr;
             }
             
+            .overview-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
             .photo-area {
                 min-height: 300px;
             }
@@ -267,6 +334,15 @@
             
             .content-section {
                 gap: 1.5rem;
+            }
+            
+            .overview-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .motor-info-card,
+            .spec-group {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -296,21 +372,99 @@
             <a href="/utilities/vdg-motor" class="btn-back">← Back to Search</a>
         </div>
         
-        <!-- Motor Info Card -->
-        <div class="motor-info-card">
-            <h3>Motor Overview</h3>
-            <div class="info-item">
-                <div class="info-label">Motor Model</div>
-                <div class="info-value">{{ motor.motor_model }}</div>
+        <!-- Motor Overview Cards (3 columns) -->
+        <div class="overview-container">
+            
+            <!-- Column 1: Motor Model, Power, Shell Diameter, RPM -->
+            <div class="motor-info-card">
+                <h3>⚙️ Motor Specs</h3>
+                <div class="info-item">
+                    <span class="info-label">Model</span>
+                    <span class="info-value">{{ motor.motor_model }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Power (HP)</span>
+                    <div class="info-value">
+                        {{ motor.hp }}
+                        <span class="info-value-unit">HP</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Shell Diameter</span>
+                    <div class="info-value">
+                        {% if motor.shell_od_mm %}{{ motor.shell_od_mm }}{% else %}N/A{% endif %}
+                        <span class="info-value-unit">mm</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">RPM</span>
+                    <div class="info-value">
+                        {{ motor.drum_rpm }}
+                        <span class="info-value-unit">RPM</span>
+                    </div>
+                </div>
             </div>
-            <div class="info-item">
-                <div class="info-label">Power Rating</div>
-                <div class="info-value">{{ motor.hp }} HP</div>
+            
+            <!-- Column 2: Gear Code, Stator Poles, Phase, Frequency -->
+            <div class="motor-info-card">
+                <h3>⚡ Electrical</h3>
+                <div class="info-item">
+                    <span class="info-label">Gear Code</span>
+                    <span class="info-value">{{ motor.gear_code }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Stator Poles</span>
+                    <div class="info-value">
+                        {% if motor.stator_poles %}{{ motor.stator_poles }}{% else %}3{% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phase</span>
+                    <div class="info-value">
+                        {% if motor.phase %}{{ motor.phase }}{% else %}3{% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Frequency</span>
+                    <div class="info-value">
+                        {% if motor.frequency_hz %}{{ motor.frequency_hz }}{% else %}60{% endif %}
+                        <span class="info-value-unit">Hz</span>
+                    </div>
+                </div>
             </div>
-            <div class="info-item">
-                <div class="info-label">Gear Code</div>
-                <div class="info-value">{{ motor.gear_code }}</div>
+            
+            <!-- Column 3: Calculated Values - Vs, Vr, Slip, Gear Ratio -->
+            <div class="motor-info-card">
+                <h3>📊 Calculated</h3>
+                <div class="info-item">
+                    <span class="info-label">Vs (Sync)</span>
+                    <div class="info-value">
+                        {% if derived_specs.Vs %}{{ "%.1f"|format(derived_specs.Vs) }}{% else %}N/A{% endif %}
+                        <span class="info-value-unit">RPM</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Vr (Actual)</span>
+                    <div class="info-value">
+                        {% if derived_specs.Vr %}{{ derived_specs.Vr|int }}{% else %}N/A{% endif %}
+                        <span class="info-value-unit">RPM</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Slip</span>
+                    <div class="info-value">
+                        2.0
+                        <span class="info-value-unit">%</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Gear Ratio</span>
+                    <div class="info-value">
+                        {% if derived_specs.Gear_ratio %}{{ "%.3f"|format(derived_specs.Gear_ratio) }}{% else %}N/A{% endif %}
+                    </div>
+                </div>
             </div>
+            
         </div>
         
         <!-- Main Content Section -->
@@ -360,17 +514,67 @@
                 </div>
             </div>
             
-            <!-- Photo Visualization Area (Right) -->
-            <div class="photo-area">
-                <div class="photo-placeholder">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p><strong>Motor Photo</strong></p>
-                    <p class="upload-hint">Upload motor image here</p>
+            <!-- Unit Conversions (Right) -->
+            <div class="spec-group conversion-group">
+                <div class="spec-group-header">🔄 Unit Conversions</div>
+                <div class="spec-items">
+                    
+                    <!-- Power: kW - HP -->
+                    <div class="conversion-item">
+                        <div class="conversion-label">Power</div>
+                        <div class="conversion-values">
+                            <div class="conversion-value">
+                                {% if derived_specs.Power_kW %}{{ "%.3f"|format(derived_specs.Power_kW) }}{% else %}—{% endif %}<br><small>kW</small>
+                            </div>
+                            <div class="conversion-arrow">⇄</div>
+                            <div class="conversion-value">
+                                {{ motor.hp }}<br><small>HP</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Speed: m/s - ft/min -->
+                    <div class="conversion-item">
+                        <div class="conversion-label">Speed</div>
+                        <div class="conversion-values">
+                            <div class="conversion-value">
+                                {% if derived_specs.Speed_ms %}{{ "%.3f"|format(derived_specs.Speed_ms) }}{% else %}—{% endif %}<br><small>m/s</small>
+                            </div>
+                            <div class="conversion-arrow">⇄</div>
+                            <div class="conversion-value">
+                                {{ motor.speed_ftmin }}<br><small>ft/min</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Belt Pull: N - lbf -->
+                    <div class="conversion-item">
+                        <div class="conversion-label">Belt Pull</div>
+                        <div class="conversion-values">
+                            <div class="conversion-value">
+                                {% if derived_specs.Belt_pull_N %}{{ "%.3f"|format(derived_specs.Belt_pull_N) }}{% else %}—{% endif %}<br><small>N</small>
+                            </div>
+                            <div class="conversion-arrow">⇄</div>
+                            <div class="conversion-value">
+                                {{ motor.belt_pull_lbf }}<br><small>lbf</small>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
             
+        </div>
+        
+        <!-- Photo Visualization Area -->
+        <div class="photo-area">
+            <div class="photo-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p><strong>Motor Photo</strong></p>
+                <p class="upload-hint">Upload motor image here for visualization</p>
+            </div>
         </div>
         
     {% endif %}
