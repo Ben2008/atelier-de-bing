@@ -11,9 +11,7 @@
             --secondary-color: #6c757d;
             --success-color: #198754;
             --accent-color: #0dcaf0;
-            --metric-color: #e7f3ff;
-            --imperial-color: #fff3e0;
-            --calc-color: #f0f0f0;
+            --conversion-color: #e8f4f8;
         }
         
         body {
@@ -122,95 +120,27 @@
             margin-left: 0.3rem;
         }
         
-        /* Main Content Section with Specs and Photo */
+        /* Main Content Section - Conversions and Photo */
         .content-section {
             display: grid;
-            grid-template-columns: 1fr 1fr 350px;
+            grid-template-columns: 1fr 350px;
             gap: 2rem;
             margin-bottom: 2rem;
         }
         
-        .spec-group {
+        .conversion-group {
             background: white;
             border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             overflow: hidden;
         }
         
-        .spec-group-header {
-            padding: 1.5rem;
-            font-weight: 700;
-            font-size: 1.1rem;
-            border-bottom: 3px solid;
-        }
-        
-        .metric-group .spec-group-header {
-            background-color: var(--metric-color);
-            border-color: #0d6efd;
-            color: #0d6efd;
-        }
-        
-        .imperial-group .spec-group-header {
-            background-color: var(--imperial-color);
-            border-color: #ff9800;
-            color: #ff9800;
-        }
-        
-        .conversion-group .spec-group-header {
-            background-color: #f0f0f0;
-            border-color: #999;
-            color: #333;
-        }
-        
-        .spec-items {
-            padding: 1.5rem;
-        }
-        
-        .spec-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid #f0f0f0;
-            transition: all 0.3s ease;
-        }
-        
-        .spec-item:last-child {
-            border-bottom: none;
-        }
-        
-        .spec-item:hover {
-            background-color: #f9f9f9;
-            border-radius: 6px;
-            padding-left: 1.2rem;
-        }
-        
-        .spec-label {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.95rem;
-        }
-        
-        .spec-value {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .spec-value-number {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        .spec-value-unit {
-            font-size: 0.85rem;
-            color: var(--secondary-color);
-            font-weight: 600;
+        .conversion-items {
+            padding: 2rem;
         }
         
         .conversion-item {
-            padding: 1rem;
+            padding: 1.5rem;
             border-bottom: 1px solid #f0f0f0;
             text-align: center;
         }
@@ -220,31 +150,40 @@
         }
         
         .conversion-label {
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
         }
         
         .conversion-values {
             display: flex;
             justify-content: space-around;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
         
         .conversion-value {
             flex: 1;
-            padding: 0.5rem;
+            padding: 0.75rem;
             background: #f9f9f9;
-            border-radius: 4px;
+            border-radius: 6px;
             font-weight: 600;
             color: var(--primary-color);
-            font-size: 0.9rem;
+            font-size: 1.05rem;
+        }
+        
+        .conversion-value-unit {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            margin-top: 0.3rem;
         }
         
         .conversion-arrow {
             color: #999;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
+            font-weight: bold;
         }
         
         .photo-area {
@@ -341,8 +280,12 @@
             }
             
             .motor-info-card,
-            .spec-group {
+            .conversion-group {
                 padding: 1.5rem;
+            }
+            
+            .conversion-values {
+                flex-direction: column;
             }
         }
     </style>
@@ -467,114 +410,46 @@
             
         </div>
         
-        <!-- Main Content Section -->
+        <!-- Main Content Section - Unit Conversions and Photo -->
         <div class="content-section">
             
-            <!-- Metric Specifications (Left) -->
-            <div class="spec-group metric-group">
-                <div class="spec-group-header">📏 Metric Specifications</div>
-                <div class="spec-items">
-                    {% if metric_specs %}
-                        {% for spec in metric_specs %}
-                            <div class="spec-item">
-                                <span class="spec-label">{{ spec.name }}</span>
-                                <div class="spec-value">
-                                    <span class="spec-value-number">{{ spec.value }}</span>
-                                    {% if spec.unit %}
-                                        <span class="spec-value-unit">{{ spec.unit }}</span>
-                                    {% endif %}
+            <!-- Unit Conversions (Left) -->
+            <div class="conversion-group">
+                <div class="conversion-items">
+                    {% if conversion_specs %}
+                        {% for spec in conversion_specs %}
+                            <div class="conversion-item">
+                                <div class="conversion-label">{{ spec.name }}</div>
+                                <div class="conversion-values">
+                                    <div class="conversion-value">
+                                        {{ "%.3f"|format(spec.metric_value) if spec.metric_value else "—" }}
+                                        <span class="conversion-value-unit">{{ spec.metric_unit }}</span>
+                                    </div>
+                                    <div class="conversion-arrow">⇄</div>
+                                    <div class="conversion-value">
+                                        {{ spec.imperial_value }}
+                                        <span class="conversion-value-unit">{{ spec.imperial_unit }}</span>
+                                    </div>
                                 </div>
                             </div>
                         {% endfor %}
                     {% else %}
-                        <p style="text-align: center; color: #999; margin: 1rem 0;">No metric specifications available</p>
+                        <p style="text-align: center; color: #999; margin: 2rem 0;">No conversion data available</p>
                     {% endif %}
                 </div>
             </div>
             
-            <!-- Imperial Specifications (Middle) -->
-            <div class="spec-group imperial-group">
-                <div class="spec-group-header">🇺🇸 Imperial Specifications</div>
-                <div class="spec-items">
-                    {% if imperial_specs %}
-                        {% for spec in imperial_specs %}
-                            <div class="spec-item">
-                                <span class="spec-label">{{ spec.name }}</span>
-                                <div class="spec-value">
-                                    <span class="spec-value-number">{{ spec.value }}</span>
-                                    {% if spec.unit %}
-                                        <span class="spec-value-unit">{{ spec.unit }}</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <p style="text-align: center; color: #999; margin: 1rem 0;">No imperial specifications available</p>
-                    {% endif %}
+            <!-- Photo Visualization Area (Right) -->
+            <div class="photo-area">
+                <div class="photo-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p><strong>Motor Photo</strong></p>
+                    <p class="upload-hint">Upload motor image here for visualization</p>
                 </div>
             </div>
             
-            <!-- Unit Conversions (Right) -->
-            <div class="spec-group conversion-group">
-                <div class="spec-group-header">🔄 Unit Conversions</div>
-                <div class="spec-items">
-                    
-                    <!-- Power: kW - HP -->
-                    <div class="conversion-item">
-                        <div class="conversion-label">Power</div>
-                        <div class="conversion-values">
-                            <div class="conversion-value">
-                                {% if derived_specs.Power_kW %}{{ "%.3f"|format(derived_specs.Power_kW) }}{% else %}—{% endif %}<br><small>kW</small>
-                            </div>
-                            <div class="conversion-arrow">⇄</div>
-                            <div class="conversion-value">
-                                {{ motor.hp }}<br><small>HP</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Speed: m/s - ft/min -->
-                    <div class="conversion-item">
-                        <div class="conversion-label">Speed</div>
-                        <div class="conversion-values">
-                            <div class="conversion-value">
-                                {% if derived_specs.Speed_ms %}{{ "%.3f"|format(derived_specs.Speed_ms) }}{% else %}—{% endif %}<br><small>m/s</small>
-                            </div>
-                            <div class="conversion-arrow">⇄</div>
-                            <div class="conversion-value">
-                                {{ motor.speed_ftmin }}<br><small>ft/min</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Belt Pull: N - lbf -->
-                    <div class="conversion-item">
-                        <div class="conversion-label">Belt Pull</div>
-                        <div class="conversion-values">
-                            <div class="conversion-value">
-                                {% if derived_specs.Belt_pull_N %}{{ "%.3f"|format(derived_specs.Belt_pull_N) }}{% else %}—{% endif %}<br><small>N</small>
-                            </div>
-                            <div class="conversion-arrow">⇄</div>
-                            <div class="conversion-value">
-                                {{ motor.belt_pull_lbf }}<br><small>lbf</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                </div>
-            </div>
-            
-        </div>
-        
-        <!-- Photo Visualization Area -->
-        <div class="photo-area">
-            <div class="photo-placeholder">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <p><strong>Motor Photo</strong></p>
-                <p class="upload-hint">Upload motor image here for visualization</p>
-            </div>
         </div>
         
     {% endif %}
