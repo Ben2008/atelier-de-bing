@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <h3>Outline Drawing Parser</h3>
+
+    <div class="row">
+
+        <div class="col-md-5">
+
+            <label class="form-label">
+                Request Text
+            </label>
+
+            <textarea
+                id="request_text"
+                rows="20"
+                class="form-control">
+            </textarea>
+
+            <button
+                class="btn btn-primary mt-3"
+                onclick="parseRequest()">
+
+                Parse Request
+
+            </button>
+
+        </div>
+
+        <div class="col-md-7">
+
+            <div class="row">
+
+                <div class="col-md-4 mb-3">
+                    <label>Model</label>
+                    <input id="model" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Face Width</label>
+                    <input id="face_width" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Material</label>
+                    <input id="material" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Profile</label>
+                    <input id="profile" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Power Entry</label>
+                    <input id="power_entry" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Rod Qty</label>
+                    <input id="rod_qty" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Sprocket</label>
+                    <input id="sprocket" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Sprocket Qty</label>
+                    <input id="sprocket_qty" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Voltage</label>
+                    <input id="voltage" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Horsepower</label>
+                    <input id="horsepower" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Speed FPM</label>
+                    <input id="speed_fpm" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Gearcode</label>
+                    <input id="gearcode" class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Oil</label>
+                    <input id="oil" class="form-control">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+async function parseRequest() {
+
+    const text =
+        document.getElementById(
+            "request_text"
+        ).value;
+
+    const response =
+        await fetch(
+            "/api/outline-drawing/parse",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                    "application/json"
+                },
+                body: JSON.stringify({
+                    request_text: text
+                })
+            }
+        );
+
+    const data =
+        await response.json();
+
+    Object.keys(data).forEach(key => {
+
+        const field =
+            document.getElementById(key);
+
+        if (field) {
+            field.value = data[key];
+        }
+
+    });
+
+}
+
+</script>
+
+{% endblock %}

@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.routers import mechanical, utilities, mywork, vdg_motor
+from app.routers import mechanical, utilities, mywork, vdg_motor, outline_drawing
 
 app = FastAPI(title="L'Atelier de Bing")
 
@@ -14,6 +14,7 @@ app.include_router(mechanical.router)
 app.include_router(utilities.router)
 app.include_router(mywork.router)
 app.include_router(vdg_motor.router)
+app.include_router(outline_drawing.router)
 
 for route in app.routes:
     print(route.path)
