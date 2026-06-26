@@ -32,9 +32,10 @@ class OutlineParser:
     def extract_model(self, txt, fields):
 
         m = re.search(
-            r"(TM\d{3}[A-Z]\d+)",
-            txt
-        )
+        r"^\s*([^\s-]+)-",
+        txt,
+        re.MULTILINE
+    )
 
         if m:
             fields.model = m.group(1)
